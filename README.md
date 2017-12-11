@@ -1,6 +1,30 @@
 # dinosaur-ui
 
-> A Vue.js project
+## din-date 组件
+>日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
+引入
+<pre>
+npm install dinosaur-ui
+
+import dinosaur from 'dinosaur-ui'
+Vue.use(dinosaur);
+
+<din-date :dateJson="dateJson"></din-date>
+
+data(){
+  return{
+     dateJson: {
+        2016: [1, 3, 5, 8, 12],
+        2017: [1, 2, 3, 4, 6, 7, 8, 10, 12],
+        2018: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
+        2019: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
+        2020: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
+        2021: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12]
+      }
+  }
+}
+
+</pre>
 
 ## Build Setup
 
