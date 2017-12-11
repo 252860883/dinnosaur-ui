@@ -1,8 +1,5 @@
 # dinosaur-ui
-
-## din-date 组件
->日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
-
+>封装一些常用的组件  
 
 引入
 <pre>
@@ -10,7 +7,13 @@ npm install dinosaur-ui
 
 import dinosaur from 'dinosaur-ui'
 Vue.use(dinosaur);
+</pre>
 
+## din-date 组件
+>日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
+
+实例：
+<pre>
 &ltdin-date :dateJson="dateJson">&lt/din-date>
 
 data(){
