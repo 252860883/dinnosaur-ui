@@ -2,6 +2,8 @@
 
 ## din-date 组件
 >日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
+
+
 引入
 <pre>
 npm install dinosaur-ui
