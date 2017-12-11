@@ -9,7 +9,7 @@ npm install dinosaur-ui
 import dinosaur from 'dinosaur-ui'
 Vue.use(dinosaur);
 
-<din-date :dateJson="dateJson"></din-date>
+&ltdin-date :dateJson="dateJson">&lt/din-date>
 
 data(){
   return{
