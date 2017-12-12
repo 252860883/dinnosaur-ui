@@ -13,8 +13,8 @@ Vue.use(dinosaur);
 >日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
 
 实例：
-<pre>
-&ltdin-date :dateJson="dateJson">&lt/din-date>
+```js
+<din-date :dateJson="dateJson"></din-date>
 
 data(){
   return{
@@ -29,7 +29,7 @@ data(){
   }
 }
 
-</pre>
+```
 
 ## Build Setup
 
