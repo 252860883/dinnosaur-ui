@@ -14,7 +14,7 @@ Vue.use(dinosaur);
 
 实例：
 ```js
-<din-date :dateJson="dateJson"></din-date>
+<din-date :dateJson="dateJson" v-model="realDate" ></din-date>
 
 data(){
   return{
@@ -24,9 +24,10 @@ data(){
         2018: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
         2019: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
         2020: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-        2021: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12]
-      }
-  }
+        2021: [1, 2, 3, 4, 6]
+      }，
+     realDate:""
+   }
 }
 
 ```
