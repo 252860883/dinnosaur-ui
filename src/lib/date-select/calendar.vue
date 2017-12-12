@@ -1,22 +1,22 @@
 <template>
 <div class="din-date">
-  <div class="din-input-border" @click="isShowSelect=!isShowSelect">
-   <img :src="require('./icon.png')" alt="">
+  <div class="din-input-border " @click="isShowSelect=!isShowSelect">
+   <img class="din-icon" :src="require('../../assets/icon.png')" alt="">
     <input type="text" class="din-input" v-model="realDate" readonly >
   </div>
   <transition name="select">
-    <div class="din-select" v-if="isShowSelect">
-      <div class="din-select-year" >
-        <span class="din-select-before" @click="clickBefore" v-if="dateJson[realYear-1]"><</span>
-        <span @click="isShowYears=!isShowYears" >{{realYear}}年</span>
-        <span class="din-select-after" @click="clickAfter" v-if="dateJson[realYear+1]">></span>
+    <div class="din-select ondate" v-if="isShowSelect">
+      <div class="din-select-year ondate" >
+        <span class="din-select-before ondate" @click="clickBefore" v-if="dateJson[showYear-1] && !isShowYears"><</span>
+        <span @click="isShowYears=!isShowYears" class="din-select-year-on ondate">{{showYear}}年</span>
+        <span class="din-select-after ondate" @click="clickAfter" v-if="dateJson[showYear+1] && !isShowYears">></span>
       </div>
-      <div class="din-content" >
-        <div class="din-month" v-if="!isShowYears" @click="selectMonth" >
-          <div  v-for="i in 12" :key="i" :class="(dateJson[realYear].indexOf(i)<0)?'din-unmonth':(realMonth==i? 'din-month-select':'din-month-on')" >{{i}}月</div>
+      <div class="din-content ondate" >
+        <div class="din-month ondate" v-if="!isShowYears" @click="selectMonth" >
+          <div  v-for="i in 12" :key="i" :class="(dateJson[realYear].indexOf(i)<0)?'din-unmonth ondate':(realMonth==i && realYear==showYear ? 'din-month-select':'din-month-on')" >{{i}}月</div>
         </div>
-        <div class="din-years" v-if="isShowYears">
-          <div v-for="(month,year) in dateJson" :key="year" @click="selectYear" name='din-year-on' :class="realYear==year?onselcetClass:''">{{year}}年</div>
+        <div class="din-years ondate" v-if="isShowYears" @click="selectYear">
+          <div v-for="(month,year) in dateJson" :key="year"  name='din-year-on' :class="(showYear==year )?onselcetClass:'ondate'">{{year}}年</div>
         </div>
       </div>
     </div>
@@ -26,35 +26,56 @@
 <script>
 export default {
   name: "din-date",
-  props:['dateJson'],
+  props: ["dateJson"],
   data() {
     return {
       isShowSelect: false,
       isShowYears: false,
-      // dateJson: {
-      //   2016: [1, 3, 5, 8, 12],
-      //   2017: [1, 2, 3, 4, 6, 7, 8, 10, 12],
-      //   2018: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-      //   2019: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-      //   2020: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-      //   2021: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12]
-      // },
-      realYear: 2017,
-      realMonth: 6,
-      onselcetClass: "div-years-onselcet"
+      realYear: "",
+      showYear: "",
+      realMonth: "",
+      onselcetClass: "div-years-onselcet ondate"
     };
   },
+  created() {},
+  mounted() {
+    //绑定最后一个数据为当前初始显示数据
+    for(let val in this.dateJson) {
+      this.realYear = val;
+      this.showYear=val;
+      this.realMonth = this.dateJson[val][this.dateJson[val].length-1];
+    }
+
+    let self = this;
+    // 点击其他区域，关闭下拉窗口
+    window.addEventListener(
+      "click",
+      function(e) {
+        if (
+          !/ondate/.test(e.target.className) &&
+          e.target.className != "din-input"
+        ) {
+          self.isShowSelect = false;
+        }
+      },
+      true
+    );
+  },
   computed: {
-    realDate() {
-      return this.realYear + "年" + this.realMonth + "月";
+    realDate: {
+      get: function() {
+        // 将数据返回给父级的数据
+        this.$emit("input", this.realYear + "年" + this.realMonth + "月");
+        return this.realYear + "年" + this.realMonth + "月";
+      }
     },
-    monthClass(value){
-      if(this.dateJson[this.realYear].indexOf(1)<0){
-        return '666'
-      }else　if(this.realMonth==value){
-        return 'din-month-select'
-      }else{
-        return 'din-month-on'
+    monthClass(value) {
+      if (this.dateJson[this.realYear].indexOf(1) < 0) {
+        return "666";
+      } else if (this.realMonth == value) {
+        return "din-month-select";
+      } else {
+        return "din-month-on";
       }
     }
   },
@@ -63,18 +84,19 @@ export default {
       if (e.target.getAttribute("class") == "din-month-on") {
         this.realMonth = e.target.innerHTML.split("月")[0];
         this.isShowSelect = false;
+        this.realYear = this.showYear;
       }
     },
     selectYear(e) {
-        this.realYear = e.target.innerHTML.split("年")[0];
-        this.isShowYears = false;
+      this.showYear = e.target.innerHTML.split("年")[0];
+      this.isShowYears = false;
     },
     // 选择上一个年份
-    clickBefore(){
-        this.realYear-=1;
+    clickBefore() {
+      this.showYear -= 1;
     },
-    clickAfter(){
-      this.realYear+=1;
+    clickAfter() {
+      this.showYear += 1;
     }
   }
 };

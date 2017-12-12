@@ -1,6 +1,5 @@
 import dateSelect from './date-select/calendar.vue';
 
-
 const comment = {
     install: function(Vue) {
       Vue.component(dateSelect.name, dateSelect)
