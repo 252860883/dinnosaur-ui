@@ -1,7 +1,7 @@
 {
   "name": "dinosaur-ui",
   "description": "封装一些常用组件",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "author": "duhonghui <duhhxfs@xinfushe.com>",
   "license": "MIT",
   "private": false,
