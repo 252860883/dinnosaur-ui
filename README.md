@@ -15,7 +15,7 @@ Vue.use(dinosaur);
 ## -din-date
 >日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
 
-![image](http://wx3.sinaimg.cn/mw690/a73bc6a1ly1fmh6q103hmj20h408amz1.jpg)  
+![image](http://wx1.sinaimg.cn/mw690/a73bc6a1ly9fmh6s9hoebj20fq08ajt4.jpg)  
 
 实例：
 ```js
