@@ -10,7 +10,7 @@ import dinosaur from 'dinosaur-ui'
 Vue.use(dinosaur);
 </pre>
 - [dinosaur-ui](#dinosaur-ui)
-  - [din-date](#din-date)
+  - [din-date](#-din-date)
 
 ## -din-date
 >日期选择器，绑定对象自定义显示年份和月份，实现部分年月可选  
