@@ -7,17 +7,25 @@
   <transition name="select">
     <div :class="dinSelect" v-if="isShowSelect">
       <div class="din-select-year ondate" >
-        <span class="din-select-before ondate" @click="clickBefore" v-if="dateJson[showYear-1] && !isShowYears"><</span>
-        <span @click="isShowYears=!isShowYears" class="din-select-year-on ondate">{{showYear}}年</span>
-        <span class="din-select-after ondate" @click="clickAfter" v-if="dateJson[showYear+1] && !isShowYears">></span>
+        <span class="din-select-before ondate" @click="clickBefore" v-if="dateJson.year[showYearIndex-1] && !isShowYears"><</span>
+        <span @click="isShowYears=!isShowYears" class="din-select-year-on ondate" >{{dateJson.year[showYearIndex]}}年</span>
+        <span class="din-select-after ondate" @click="clickAfter" v-if="dateJson.year[showYearIndex+1]  && !isShowYears">></span>
       </div>
       <div class="din-content ondate" >
-        <div class="din-month ondate" v-if="!isShowYears" @click="selectMonth" >
-          <div  v-for="i in 12" :key="i" :class="(dateJson[showYear].indexOf(i)<0)?'din-unmonth ondate':(realMonth==i && realYear==showYear ? 'din-month-select':'din-month-on')" >{{i}}月</div>
-        </div>
-        <div class="din-years ondate" v-if="isShowYears" @click="selectYear">
-          <div v-for="(month,year) in dateJson" :key="year"  name='din-year-on' :class="(showYear==year )?onselcetClass:'ondate'">{{year}}年</div>
-        </div>
+        <!-- 月份显示 -->
+        <transition name="select">
+          <div class="din-month ondate" v-if="!isShowYears" @click="selectMonth" >
+            <div  v-for="i in 12" :key="i" :class="(dateJson.month[showYearIndex].indexOf(i)<0)?'din-unmonth ondate':(dateJson.month[showYearIndex][realMonthIndex]==i && realYearIndex==showYearIndex ? 'din-month-select':'din-month-on')" >{{i}}月</div>
+          </div>
+        </transition>
+
+        <!-- 年份显示 -->
+        <transition name="select">
+          <div class="din-years ondate" v-if="isShowYears" @click="selectYear">
+            <div v-for="(year,index) in dateJson.year" :key="year"  name='din-year-on' :class="(realYearIndex==index )?onselcetClass:'ondate'">{{year}}年</div>
+          </div>
+        </transition>
+
       </div>
     </div>
   </transition>
@@ -31,27 +39,85 @@ export default {
     return {
       isShowSelect: false,
       isShowYears: false,
-      realYear: "",
-      showYear: "",
-      realMonth: "",
+      isShowDate: true,
+      realYear: 0,
+      showYearIndex: 0,
+      realYearIndex: 0,
+      showYear: 0,
+      realMonthIndex: 0,
+      showMonthIndex: 0,
+      realMonth: 0,
       onselcetClass: "div-years-onselcet ondate",
-      dinSelect:"din-select  ondate"
+      dinSelect: "din-select  ondate",
+      currentDate: false //初始化显示的时间
     };
   },
   created() {},
-  mounted() {
-    //绑定最后一个数据为当前初始显示数据
-    for (let val in this.dateJson) {
-      this.realYear = val;
-      this.showYear = val;
-      this.realMonth = this.dateJson[val][this.dateJson[val].length - 1];
+  watch: {
+    dateJson(dateJson) {
+      //如果没有设置当前显示的月份，绑定最后一个数据为当前初始显示数据
+      // 如果没有设置或者设置错误当前显示的月份，绑定最后一个数据为当前初始显示数据
+      try {
+        this.realYearIndex = dateJson.year.indexOf(dateJson.currentDate[0]);
+        this.showYearIndex = dateJson.year.indexOf(dateJson.currentDate[0]);
+        this.realMonthIndex = dateJson.month[this.realYearIndex].indexOf(
+          dateJson.currentDate[1]
+        );
+        if (this.realMonthIndex < 0 || this.realYearIndex < 0) {
+          throw Error;
+        }
+      } catch (e) {
+        this.realYearIndex = dateJson.year.length - 1;
+        this.showYearIndex = dateJson.year.length - 1;
+        this.realMonthIndex =
+          this.dateJson.month[this.realYearIndex].length - 1;
+      }
+    },
+    // 如果页面关闭则还原显示
+    isShowSelect(val) {
+      if (!val) {
+        this.showYearIndex = this.realYearIndex;
+      }
     }
+  },
+  created() {
+    // console.log(this.dateJson);
+    // 如果没有设置或者设置错误当前显示的月份，绑定最后一个数据为当前初始显示数据
+    // if (!this.dateJson.year) {
+    //   this.dateJson = {
+    //     year: [0,0],
+    //     month: [0,0]
+    //   };
+    // }
+  },
+  mounted() {
     let self = this;
+    if (this.dateJson.year) {
+      try {
+        this.realYearIndex = this.dateJson.year.indexOf(
+          this.dateJson.currentDate[0]
+        );
+        this.showYearIndex = this.dateJson.year.indexOf(
+          this.dateJson.currentDate[0]
+        );
+        this.realMonthIndex = this.dateJson.month[this.realYearIndex].indexOf(
+          this.dateJson.currentDate[1]
+        );
+        if (this.realMonthIndex < 0 || this.realYearIndex < 0) {
+          throw Error;
+        }
+      } catch (e) {
+        this.realYearIndex = this.dateJson.year.length - 1;
+        this.showYearIndex = this.dateJson.year.length - 1;
+        this.realMonthIndex =
+          this.dateJson.month[this.realYearIndex].length - 1;
+      }
+    }
+
     // 点击其他区域，关闭下拉窗口
     window.addEventListener(
       "click",
       function(e) {
-        console.log(e.target.tagName);
         if (
           !/ondate/.test(e.target.className) &&
           e.target.className != "din-input" &&
@@ -64,28 +130,64 @@ export default {
     );
 
     // 下拉区域的判断
-    let inputEle=document.getElementsByClassName('din-input')[0];
-    let inputRight=inputEle.getBoundingClientRect().x,
-        inputTop=inputEle.getBoundingClientRect().y;
-        console.log();
-    // 如果距离底部太靠下,距离右边正常，那么下拉框向上显示
-    if(window.innerHeight-inputTop<250 && window.innerWidth-inputRight>250 ){
-      this.dinSelect='din-select-up  ondate';
+    let inputEle = document.getElementsByClassName("din-input")[0];
+    let inputRight = inputEle.getBoundingClientRect().x,
+      inputTop = inputEle.getBoundingClientRect().y;
+
+    if (
+      window.innerHeight - inputTop < 250 &&
+      window.innerWidth - inputRight > 250
+    ) {
+      this.dinSelect = "din-select-up  ondate";
     }
-    if(window.innerHeight-inputTop<250 && window.innerWidth-inputRight<=250 ){
-      this.dinSelect='din-select-up-right  ondate';
+    if (
+      window.innerHeight - inputTop < 250 &&
+      window.innerWidth - inputRight <= 250
+    ) {
+      this.dinSelect = "din-select-up-right  ondate";
     }
-    if(window.innerHeight-inputTop>=250 && window.innerWidth-inputRight<=250 ){
-      this.dinSelect='din-select-right  ondate';
+    if (
+      window.innerHeight - inputTop >= 250 &&
+      window.innerWidth - inputRight <= 250
+    ) {
+      this.dinSelect = "din-select-right  ondate";
     }
-  
   },
   computed: {
     realDate: {
       get: function() {
         // 将数据返回给父级的数据
-        this.$emit("input", this.realYear + "年" + this.realMonth + "月");
-        return this.realYear + "年" + this.realMonth + "月";
+        let yearType = "年",
+          monthType = "月";
+        if (this.dateJson.dateType != undefined) {
+          switch (this.dateJson.dateType) {
+            case 0:
+              break;
+            case 1:
+              yearType = " - ";
+              monthType = "";
+              break;
+            case 2:
+              yearType = " / ";
+              monthType = "";
+              break;
+          }
+        }
+        if (this.dateJson.year) {
+          this.$emit(
+            "input",
+            this.dateJson.year[this.realYearIndex] +
+              yearType +
+              this.dateJson.month[this.realYearIndex][this.realMonthIndex] +
+              monthType
+          );
+          return (
+            this.dateJson.year[this.realYearIndex] +
+            yearType +
+            this.dateJson.month[this.realYearIndex][this.realMonthIndex] +
+            monthType
+          );
+        }
       }
     },
     monthClass(value) {
@@ -101,21 +203,25 @@ export default {
   methods: {
     selectMonth(e) {
       if (e.target.getAttribute("class") == "din-month-on") {
-        this.realMonth = e.target.innerHTML.split("月")[0];
+        this.realMonthIndex = this.dateJson.month[this.showYearIndex].indexOf(
+          parseInt(e.target.innerHTML.split("月")[0])
+        );
         this.isShowSelect = false;
-        this.realYear = this.showYear;
+        this.realYearIndex = this.showYearIndex;
       }
     },
     selectYear(e) {
-      this.showYear = e.target.innerHTML.split("年")[0];
+      this.showYearIndex = this.dateJson.year.indexOf(
+        parseInt(e.target.innerHTML.split("年")[0])
+      );
       this.isShowYears = false;
     },
     // 选择上一个年份
     clickBefore() {
-      this.showYear -= 1;
+      this.showYearIndex--;
     },
     clickAfter() {
-      this.showYear += 1;
+      this.showYearIndex++;
     }
   }
 };
@@ -220,7 +326,7 @@ export default {
   border-top: 0;
 }
 
-.din-select-up{
+.din-select-up {
   position: absolute;
   left: 0;
   bottom: 50px;
@@ -252,7 +358,7 @@ export default {
   border-top: 8px solid #ddd;
 }
 
-.din-select-up-right{
+.din-select-up-right {
   position: absolute;
   right: 0;
   bottom: 50px;
@@ -284,8 +390,6 @@ export default {
   border-top: 8px solid #ddd;
 }
 
-
-
 .din-select-year {
   height: 40px;
   line-height: 40px;
@@ -308,8 +412,13 @@ export default {
   width: 30px;
   cursor: pointer;
 }
+.din-content {
+  position: relative;
+}
 .din-month {
   margin: 10px 0;
+  position: absolute;
+  /* top: 10px; */
 }
 .din-month div {
   width: 33px;
@@ -357,7 +466,6 @@ export default {
 .select-enter,
 .select-leave-to {
   opacity: 0;
-  /* height: 0; */
 }
 .select-enter-active,
 .select-leave-active {

@@ -12,18 +12,32 @@ export default {
   data() {
     return {
       msg: "Welcome to Your Vue.js App",
-      dateJson: {
-        2016: [1, 3, 5, 8, 12],
-        2017: [1, 2, 3, 4, 6, 7, 8, 10, 12],
-        2018: [5, 6, 7, 8, 10, 12],
-        2019: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-        2020: [1, 2, 3, 4, 5, 6, 7, 8, 10, 12],
-        2021: [1, 2, 3,9]
-      },
-      realDate:""
+      dateJson: {},
+      realDate: ""
     };
   },
-  created() {}
+  created() {
+    let self = this;
+    setTimeout(() => {
+      /**
+       * year：相应的年份列表
+       * month：二维数组，对应年份的月份
+       * currentDate：默认显示的时间，第一个参数为年，第二个参数为月份
+       * dateType：显示时间的格式，0: 2017年11月(默认) || 1: 2017/11 || 2: 2017-11
+       */
+    self.dateJson = {
+      year: [2014, 2016, 2017, 2018],
+      month: [
+        [1, 2, 3, 5, 8, 9, 10],
+        [1, 2, 3, 5, 8, 10],
+        [1, 2, 3, 5, 8, 9, 10],
+        [1, 2, 3, 5, 8, 10]
+      ],
+      currentDate: [2017, 5],
+      dateType: 0 
+    };
+    }, 1000);
+  }
 };
 </script>
 
@@ -34,7 +48,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top:100px;
+  margin-top: 100px;
   margin-left: 700px;
 }
 
