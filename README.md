@@ -1,5 +1,5 @@
 # dinosaur-ui
->封装一些常用的组件  
+>封装一些常用的组件      
 Encapsulate some common components.
 
 引入
